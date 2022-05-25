@@ -1,9 +1,19 @@
+import { useState } from "react";
+
 import useValidate from "../hooks/useValidate";
 
 import Button from "./UI/Button";
 import Input from "./UI/input";
 
 const RightContent = () => {
+  const [isChecked, setIsChecked] = useState(false);
+  const [checkboxIsTouched, setCheckboxIsTouched] = useState(false);
+
+  const checkboxChangeHandler = () => {
+    setIsChecked(!isChecked);
+    setCheckboxIsTouched(true);
+  };
+
   const {
     value: enteredEmail,
     hasError: emailHasError,
@@ -75,7 +85,8 @@ const RightContent = () => {
     passwordIsValid &&
     confirmPwdIsValid &&
     fullnameIsValid &&
-    numberIsValid
+    numberIsValid &&
+    isChecked
   ) {
     formIsValid = true;
   }
@@ -89,16 +100,17 @@ const RightContent = () => {
       confirmPwdBlurHandler();
       fullnameBlurHandler();
       numberBlurHandler();
+      setCheckboxIsTouched(true);
       return;
     }
-
-    console.log(enteredEmail, enteredPassword, enteredConfirmPwd);
 
     emailReset();
     passwordReset();
     confirmPwdReset();
     fullnameReset();
     numberReset();
+    setCheckboxIsTouched(false);
+    setIsChecked(false);
   };
 
   const emailErrorClass = emailHasError ? "invalid" : "";
@@ -169,11 +181,22 @@ const RightContent = () => {
         />
 
         <div className="form-checkbox">
-          <input type="checkbox" id="termsCondition" />
+          <input
+            type="checkbox"
+            id="termsCondition"
+            value="terms"
+            checked={isChecked}
+            onChange={checkboxChangeHandler}
+          />
           <label htmlFor="termsCondition">
             I read and agree Terms and Conditions
           </label>
         </div>
+        {!isChecked && checkboxIsTouched && (
+          <p className="error-text">
+            Please agree to our terms and conditions.
+          </p>
+        )}
         <Button palceholder="Create Account" />
       </form>
     </div>
